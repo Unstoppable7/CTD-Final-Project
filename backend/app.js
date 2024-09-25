@@ -5,17 +5,24 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 3000;
 
-const router = require("./routes/auth");
+const authRouter = require("./routes/auth");
+const taskRouter = require("./routes/task");
+const { expressjwt } = require("express-jwt");
 
 app.use(express.json());
 
-app.use("/", router);
+app.use("/", authRouter);
+app.use(
+   "/tasks",
+   expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] }),
+   taskRouter
+);
 
 const start = async () => {
    try {
       await mongoose.connect(process.env.MONGO_URI);
       app.listen(port, () => {
-         console.log(`Estoy escuchando en el puerto ${port}...`);
+         console.log(`Listening on the port ${port}...`);
       });
    } catch (error) {
       console.log(error);
