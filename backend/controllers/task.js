@@ -1,14 +1,16 @@
 const Task = require("../models/task");
+const errorTypes = require("../errors/errorTypes");
+const { StatusCodes } = require("http-status-codes");
 
 const getAll = async (req, res) => {
    const allTasks = await Task.find({ createdBy: req.auth.userID }).sort({
       priority: "desc",
    });
 
-   res.status(200).json({ allTasks });
+   res.status(StatusCodes.OK).json({ allTasks });
 };
 
-const getDetails = async (req, res) => {
+const getDetails = async (req, res, next) => {
    const {
       params: { id: taskId },
       auth: { userID: userID },
@@ -16,7 +18,12 @@ const getDetails = async (req, res) => {
 
    const task = await Task.findOne({ _id: taskId, createdBy: userID });
    if (!task) {
-      return res.status(404).json({ msg: `Task id: ${taskId} not found` });
+      return next(
+         Object.assign(new Error(), {
+            name: errorTypes.NOT_FOUND,
+            objInvolved: Task.modelName,
+         })
+      );
    }
 
    const taskResponse = {
@@ -24,10 +31,10 @@ const getDetails = async (req, res) => {
       priority: task.priorityToString(task.priority),
    };
 
-   res.status(200).json({ task: taskResponse });
+   res.status(StatusCodes.OK).json({ task: taskResponse });
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
    const { parentTaskId } = req.body;
 
    req.body.createdBy = req.auth.userID;
@@ -38,18 +45,28 @@ const create = async (req, res) => {
       const newTask = await Task.create(req.body);
       if (parentTaskId) {
          const parentTask = await Task.findById(parentTaskId);
-         if (parentTask) {
-            parentTask.subTasks.push(newTask._id);
-            await parentTask.save();
+
+         if (!parentTask) {
+            return next(
+               Object.assign(new Error(), {
+                  name: errorTypes.NOT_FOUND,
+                  objInvolved: `Parent ${Task.modelName}`,
+               })
+            );
          }
+         parentTask.subTasks.push(newTask._id);
+         await parentTask.save();
       }
-      res.status(201).json({ msg: "Task created successfully", task: newTask });
+      res.status(StatusCodes.CREATED).json({
+         message: "Task created successfully",
+         data: newTask,
+      });
    } catch (error) {
-      return res.status(500).json(error.message);
+      return next(error);
    }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
    const {
       params: { id: taskId },
       auth: { userID: userID },
@@ -69,63 +86,71 @@ const update = async (req, res) => {
          }
       );
       if (!task) {
-         return res.status(404).json({ msg: "User not found" });
+         return next(
+            Object.assign(new Error(), {
+               name: errorTypes.NOT_FOUND,
+               objInvolved: Task.modelName,
+            })
+         );
       }
 
       return res
-         .status(200)
-         .json({ msg: "Task successfully updated", task: task });
+         .status(StatusCodes.OK)
+         .json({ message: "Task successfully updated", data: task });
    } catch (error) {
-      return res.status(500).json(error.message);
+      return next(error);
    }
 };
 
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
    const {
       params: { parentTaskId: parentTaskId, taskId: taskId },
       auth: { userID: userID },
    } = req;
 
    try {
-      await deleteTaskAndSubtasks(taskId, userID);
-
+      await deleteTaskAndSubtasks(taskId, userID, next);
       if (parentTaskId !== "0") {
          const parentTask = await Task.findById(parentTaskId);
-
-         if (parentTask) {
-            const subTaskIndex = parentTask.subTasks.indexOf(taskId);
-
-            if (subTaskIndex !== -1) {
-               parentTask.subTasks.splice(subTaskIndex, 1);
-
-               await parentTask.save();
-            }
+         if (!parentTask) {
+            return next(
+               Object.assign(new Error(), {
+                  name: errorTypes.NOT_FOUND,
+                  objInvolved: `Parent ${Task.modelName}`,
+               })
+            );
+         }
+         const subTaskIndex = parentTask.subTasks.indexOf(taskId);
+         if (subTaskIndex !== -1) {
+            parentTask.subTasks.splice(subTaskIndex, 1);
+            await parentTask.save();
          }
       }
-
-      return res.status(200).json({ msg: "Task successfully deleted" });
+      return res
+         .status(StatusCodes.OK)
+         .json({ message: "Task successfully deleted" });
    } catch (error) {
-      return res.status(500).json(error.message);
+      return next(error);
    }
 };
 
-const deleteTaskAndSubtasks = async (taskId, userID) => {
+const deleteTaskAndSubtasks = async (taskId, userID, next) => {
    try {
       const task = await Task.findOne({ _id: taskId, createdBy: userID });
-
-      //TODO error handling
       if (!task) {
-         throw new Error("Task not found");
+         return next(
+            Object.assign(new Error(), {
+               name: errorTypes.NOT_FOUND,
+               objInvolved: Task.modelName,
+            })
+         );
       }
-
       for (const subTaskId of task.subTasks) {
          await deleteTaskAndSubtasks(subTaskId, userID);
       }
-
       await Task.findOneAndDelete({ _id: taskId, createdBy: userID });
    } catch (error) {
-      console.error(`Error deleting task: ${error.message}`);
-      throw error;
+      return next(error);
    }
 };
 

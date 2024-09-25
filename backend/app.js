@@ -8,6 +8,7 @@ const port = 3000;
 const authRouter = require("./routes/auth");
 const taskRouter = require("./routes/task");
 const { expressjwt } = require("express-jwt");
+const errorHandler = require("./middleware/error-handler");
 
 app.use(express.json());
 
@@ -17,6 +18,8 @@ app.use(
    expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] }),
    taskRouter
 );
+
+app.use(errorHandler);
 
 const start = async () => {
    try {

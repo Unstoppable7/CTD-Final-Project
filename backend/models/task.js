@@ -50,7 +50,7 @@ const taskSchema = new Schema({
    createdBy: {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      required: [true],
+      required: [true, "The task must be associated with a user"],
    },
 });
 

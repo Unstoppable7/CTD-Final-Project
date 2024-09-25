@@ -30,6 +30,3 @@ dist-ssr
 
 ###Others
 .vs
-
-###VSC
-.code-workspace
