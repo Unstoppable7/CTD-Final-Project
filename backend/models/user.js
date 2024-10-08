@@ -40,7 +40,7 @@ userSchema.methods.createJWT = async function () {
    return new Promise((resolve, reject) => {
       jwt.sign(
          {
-            userID: this._id, userName: this.name
+            id: this._id, username: this.name
          },
          process.env.JWT_SECRET,
          { expiresIn: process.env.JWT_LIFETIME },

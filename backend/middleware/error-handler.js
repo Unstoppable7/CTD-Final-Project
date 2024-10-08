@@ -23,14 +23,41 @@ const errorHandlerMiddleware = (err, req, res, next) => {
             .map((item) => item.message)
             .join(",");
          break;
-
+      //express-jwt error
+      case errorTypes.TOKEN_EXPIRED:
+         errorHandlerObj.statusCode = StatusCodes.UNAUTHORIZED;
+         errorHandlerObj.message =
+            "Your session has expired, please login again";
+         break;
+      //express-jwt error
+      case errorTypes.INVALID_SIGNATURE:
+         errorHandlerObj.statusCode = StatusCodes.FORBIDDEN;
+         errorHandlerObj.message =
+            "A problem has occurred with authentication. Please try logging in again";
+         break;
+      case errorTypes.MONGO_SERVER_ERROR:
+         switch (err.code) {
+            case 11000:
+               errorHandlerObj.statusCode = StatusCodes.CONFLICT;
+               errorHandlerObj.message = `${Object.values(err.keyValue).join(
+                  ", "
+               )} is already registered`;
+               break;
+            default:
+               errorHandlerObj.statusCode = INTERNAL_SERVER_ERROR;
+               errorHandlerObj.message =
+                  err.errmsg ||
+                  "We are having problems at the moment please try again later";
+               console.log(err);
+               break;
+         }
+         break;
       default:
          errorHandlerObj.statusCode =
             err.status || StatusCodes.INTERNAL_SERVER_ERROR;
          errorHandlerObj.message =
             err.message ||
             "We are having problems at the moment please try again later";
-
          console.log(err);
          break;
    }

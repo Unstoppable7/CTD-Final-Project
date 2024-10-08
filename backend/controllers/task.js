@@ -3,17 +3,17 @@ const errorTypes = require("../errors/errorTypes");
 const { StatusCodes } = require("http-status-codes");
 
 const getAll = async (req, res) => {
-   const allTasks = await Task.find({ createdBy: req.auth.userID }).sort({
+   const allTasks = await Task.find({ createdBy: req.user.id }).sort({
       priority: "desc",
    });
-
+   
    res.status(StatusCodes.OK).json({ allTasks });
 };
 
 const getDetails = async (req, res, next) => {
    const {
       params: { id: taskId },
-      auth: { userID: userID },
+      user: { id: userID },
    } = req;
 
    const task = await Task.findOne({ _id: taskId, createdBy: userID });
@@ -37,7 +37,7 @@ const getDetails = async (req, res, next) => {
 const create = async (req, res, next) => {
    const { parentTaskId } = req.body;
 
-   req.body.createdBy = req.auth.userID;
+   req.body.createdBy = req.user.id;
 
    req.body.priority = priorityToNumeric(req.body.priority);
 
@@ -69,7 +69,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
    const {
       params: { id: taskId },
-      auth: { userID: userID },
+      user: { id: userID },
    } = req;
 
    if (req.body.priority) {
@@ -105,7 +105,7 @@ const update = async (req, res, next) => {
 const remove = async (req, res, next) => {
    const {
       params: { parentTaskId: parentTaskId, taskId: taskId },
-      auth: { userID: userID },
+      user: { id: userID },
    } = req;
 
    try {
