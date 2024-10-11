@@ -2,12 +2,45 @@ const Task = require("../models/task");
 const errorTypes = require("../errors/errorTypes");
 const { StatusCodes } = require("http-status-codes");
 
-const getAll = async (req, res) => {
-   const allTasks = await Task.find({ createdBy: req.user.id }).sort({
-      priority: "desc",
-   });
-   
-   res.status(StatusCodes.OK).json({ allTasks });
+const getRootTasks = async (req, res) => {
+   const rootTaskList = await Task.find({
+      createdBy: req.user.id,
+      parentTask: null,
+   })
+      .sort({
+         priority: "desc",
+      })
+      .lean();
+
+   res.status(StatusCodes.OK).json(
+      rootTaskList.map((task) => ({
+         ...task,
+         priority: Task.prototype.priorityToString(task.priority),
+      }))
+   );
+};
+
+const getChildTasks = async (req, res) => {
+   const {
+      params: { id: parentTaskId },
+      user: { id: userID },
+   } = req;
+
+   const childTaskList = await Task.find({
+      createdBy: userID,
+      parentTask: parentTaskId,
+   })
+      .sort({
+         priority: "desc",
+      })
+      .lean();
+
+   res.status(StatusCodes.OK).json(
+      childTaskList.map((task) => ({
+         ...task,
+         priority: Task.prototype.priorityToString(task.priority),
+      }))
+   );
 };
 
 const getDetails = async (req, res, next) => {
@@ -16,50 +49,56 @@ const getDetails = async (req, res, next) => {
       user: { id: userID },
    } = req;
 
-   const task = await Task.findOne({ _id: taskId, createdBy: userID });
-   if (!task) {
-      return next(
-         Object.assign(new Error(), {
+   try {
+      const task = await Task.findOne({
+         _id: taskId,
+         createdBy: userID,
+      }).lean();
+
+      if (!task) {
+         return next({
             name: errorTypes.NOT_FOUND,
             objInvolved: Task.modelName,
-         })
-      );
+         });
+      }
+
+      res.status(StatusCodes.OK).json({
+         task: {
+            ...task,
+            priority: Task.prototype.priorityToString(task.priority),
+         },
+      });
+   } catch (error) {
+      next(error);
    }
-
-   const taskResponse = {
-      ...task.toObject(),
-      priority: task.priorityToString(task.priority),
-   };
-
-   res.status(StatusCodes.OK).json({ task: taskResponse });
 };
 
 const create = async (req, res, next) => {
-   const { parentTaskId } = req.body;
+   const { parentTask: parentTaskId } = req.body;
 
    req.body.createdBy = req.user.id;
 
    req.body.priority = priorityToNumeric(req.body.priority);
 
    try {
-      const newTask = await Task.create(req.body);
+      let newTask = new Task(req.body);
       if (parentTaskId) {
-         const parentTask = await Task.findById(parentTaskId);
+         const parentTaskObj = await Task.findById(parentTaskId);
 
-         if (!parentTask) {
-            return next(
-               Object.assign(new Error(), {
-                  name: errorTypes.NOT_FOUND,
-                  objInvolved: `Parent ${Task.modelName}`,
-               })
-            );
+         if (!parentTaskObj) {
+            return next({
+               name: errorTypes.NOT_FOUND,
+               objInvolved: `Parent ${Task.modelName}`,
+            });
          }
-         parentTask.subTasks.push(newTask._id);
-         await parentTask.save();
+         parentTaskObj.subTasks.push(newTask._id);
+         await parentTaskObj.save();
       }
+      await newTask.save();
+
       res.status(StatusCodes.CREATED).json({
-         message: "Task created successfully",
-         data: newTask,
+         ...newTask._doc,
+         priority: Task.prototype.priorityToString(newTask.priority),
       });
    } catch (error) {
       return next(error);
@@ -86,17 +125,16 @@ const update = async (req, res, next) => {
          }
       );
       if (!task) {
-         return next(
-            Object.assign(new Error(), {
-               name: errorTypes.NOT_FOUND,
-               objInvolved: Task.modelName,
-            })
-         );
+         return next({
+            name: errorTypes.NOT_FOUND,
+            objInvolved: Task.modelName,
+         });
       }
 
-      return res
-         .status(StatusCodes.OK)
-         .json({ message: "Task successfully updated", data: task });
+      return res.status(StatusCodes.OK).json({
+         ...task._doc,
+         priority: Task.prototype.priorityToString(task.priority),
+      });
    } catch (error) {
       return next(error);
    }
@@ -109,16 +147,17 @@ const remove = async (req, res, next) => {
    } = req;
 
    try {
-      await deleteTaskAndSubtasks(taskId, userID, next);
+      const error = await deleteTaskAndSubtasks(taskId, userID);
+      if (error) {
+         return next(error);
+      }
       if (parentTaskId !== "0") {
          const parentTask = await Task.findById(parentTaskId);
          if (!parentTask) {
-            return next(
-               Object.assign(new Error(), {
-                  name: errorTypes.NOT_FOUND,
-                  objInvolved: `Parent ${Task.modelName}`,
-               })
-            );
+            return next({
+               name: errorTypes.NOT_FOUND,
+               objInvolved: `Parent ${Task.modelName}`,
+            });
          }
          const subTaskIndex = parentTask.subTasks.indexOf(taskId);
          if (subTaskIndex !== -1) {
@@ -134,23 +173,22 @@ const remove = async (req, res, next) => {
    }
 };
 
-const deleteTaskAndSubtasks = async (taskId, userID, next) => {
+const deleteTaskAndSubtasks = async (taskId, userID) => {
    try {
       const task = await Task.findOne({ _id: taskId, createdBy: userID });
+
       if (!task) {
-         return next(
-            Object.assign(new Error(), {
-               name: errorTypes.NOT_FOUND,
-               objInvolved: Task.modelName,
-            })
-         );
+         return {
+            name: errorTypes.NOT_FOUND,
+            objInvolved: Task.modelName,
+         };
       }
       for (const subTaskId of task.subTasks) {
          await deleteTaskAndSubtasks(subTaskId, userID);
       }
       await Task.findOneAndDelete({ _id: taskId, createdBy: userID });
    } catch (error) {
-      return next(error);
+      return error;
    }
 };
 
@@ -166,4 +204,11 @@ const priorityToNumeric = (priorityString) => {
          return 0;
    }
 };
-module.exports = { getAll, getDetails, create, update, remove };
+module.exports = {
+   getRootTasks,
+   getChildTasks,
+   getDetails,
+   create,
+   update,
+   remove,
+};

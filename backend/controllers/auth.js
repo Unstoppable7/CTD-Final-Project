@@ -31,22 +31,18 @@ const signin = async (req, res, next) => {
    try {
       const user = await User.findOne({ email: email });
       if (!user) {
-         return next(
-            Object.assign(new Error(), {
-               name: errorTypes.NOT_FOUND,
-               objInvolved: User.modelName,
-               message: "email does not match",
-            })
-         );
+         return next({
+            name: errorTypes.NOT_FOUND,
+            objInvolved: User.modelName,
+            message: "email does not match",
+         });
       }
       if (!(await user.comparePassword(password))) {
-         return next(
-            Object.assign(new Error(), {
-               name: errorTypes.NOT_FOUND,
-               objInvolved: User.modelName,
-               message: "password does not match",
-            })
-         );
+         return next({
+            name: errorTypes.NOT_FOUND,
+            objInvolved: User.modelName,
+            message: "password does not match",
+         });
       }
       const token = await user.createJWT();
       res.cookie(process.env.AUTH_COOKIES_NAME, token, {

@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const errorTypes = require("../errors/errorTypes");
+const ErrorTypes = require("../errors/errorTypes");
 
 const errorHandlerMiddleware = (err, req, res, next) => {
    let errorHandlerObj = {};
@@ -44,13 +45,17 @@ const errorHandlerMiddleware = (err, req, res, next) => {
                )} is already registered`;
                break;
             default:
-               errorHandlerObj.statusCode = INTERNAL_SERVER_ERROR;
+               errorHandlerObj.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
                errorHandlerObj.message =
                   err.errmsg ||
                   "We are having problems at the moment please try again later";
-               console.log(err);
                break;
          }
+         break;
+      case ErrorTypes.CAST_ERROR:
+         errorHandlerObj.statusCode = StatusCodes.BAD_REQUEST;
+         errorHandlerObj.message =
+            "It seems that you are looking for is invalid or does not exist, please verify the data and try again";
          break;
       default:
          errorHandlerObj.statusCode =
