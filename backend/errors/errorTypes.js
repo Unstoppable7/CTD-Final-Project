@@ -5,6 +5,7 @@ const ErrorTypes = Object.freeze({
    TOKEN_EXPIRED: "TokenExpiredError",
    INVALID_SIGNATURE: "JsonWebTokenError",
    MONGO_SERVER_ERROR: "MongoServerError",
+   CAST_ERROR: "CastError",
 });
 
 module.exports = ErrorTypes;

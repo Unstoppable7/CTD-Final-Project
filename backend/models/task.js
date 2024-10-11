@@ -9,6 +9,12 @@ const taskSchema = new Schema({
 
    description: String,
 
+   parentTask: {
+      type: Schema.Types.ObjectId,
+      ref: "Task",
+      default: null,
+   },
+
    subTasks: [
       {
          type: Schema.Types.ObjectId,
