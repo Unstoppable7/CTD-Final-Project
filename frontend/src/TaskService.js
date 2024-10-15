@@ -1,17 +1,14 @@
-import { authService } from "./AuthService";
-
 class TaskService {
-   static async getRootTasks() {
+   static async getTasks(parentId) {
       const options = {
          method: "GET",
          credentials: "include",
       };
-
+      const url =
+         import.meta.env.VITE_API_TASK_ROOT_URL +
+         (parentId ? `/${parentId}` : "");
       try {
-         const response = await fetch(
-            import.meta.env.VITE_API_TASK_ROOT_URL,
-            options
-         );
+         const response = await fetch(url, options);
 
          return await this.handleFetchTasksError(response);
       } catch (error) {
@@ -19,30 +16,7 @@ class TaskService {
             success: false,
             message:
                error.message ||
-               "An unexpected error occurred during get root tasks",
-         };
-      }
-   }
-
-   static async getChildrenTasks(parentId) {
-      const options = {
-         method: "GET",
-         credentials: "include",
-      };
-
-      try {
-         const response = await fetch(
-            import.meta.env.VITE_API_TASK_ROOT_URL + `/${parentId}`,
-            options
-         );
-
-         return await this.handleFetchTasksError(response);
-      } catch (error) {
-         return {
-            success: false,
-            message:
-               error.message ||
-               "An unexpected error occurred during get children tasks",
+               "An unexpected error occurred during get tasks",
          };
       }
    }
@@ -138,7 +112,8 @@ class TaskService {
       };
       try {
          const response = await fetch(
-            import.meta.env.VITE_API_TASK_ROOT_URL + `/${parentId}/subtask/${taskId}`,
+            import.meta.env.VITE_API_TASK_ROOT_URL +
+               `/${parentId}/subtask/${taskId}`,
             options
          );
          return await this.handleFetchTasksError(response);
