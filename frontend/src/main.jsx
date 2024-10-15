@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from './routes/error-page.jsx';
 import Signin, { action as signinAction, loader as signinLoader } from './routes/signin.jsx';
 import Signup, { action as signupAction, loader as signupLoader } from './routes/signup.jsx';
-import Tasks, { action as tasksAction, loader as tasksLoader } from './routes/tasks.jsx';
+import Tasks, { loader as tasksLoader } from './routes/tasks.jsx';
 
 const router = createBrowserRouter([
    {
@@ -31,7 +31,6 @@ const router = createBrowserRouter([
    {
       path: import.meta.env.VITE_CLIENT_TASK_ROOT_URL,
       element: <Tasks />,
-      action: tasksAction,
       loader: tasksLoader
    }
 ])
