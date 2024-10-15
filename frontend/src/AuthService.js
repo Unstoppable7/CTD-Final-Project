@@ -1,6 +1,7 @@
 class AuthService {
    constructor() {
       this._isAuthenticated = false;
+      this._user = {};
    }
    get isAuthenticated() {
       return this._isAuthenticated;
@@ -10,6 +11,15 @@ class AuthService {
          throw new Error("isAuthenticated must be a boolean value");
       }
       this._isAuthenticated = value;
+   }
+   get user() {
+      return this._user;
+   }
+   set user(value) {
+      if (typeof value !== "object") {
+         throw new Error("user must be a object value");
+      }
+      this._user = value;
    }
    async validateSession() {
       try {
@@ -22,8 +32,12 @@ class AuthService {
             return { success: false, message: json.message };
          }
          this.isAuthenticated = true;
+         const result = await response.json();
+         this.user = result.user;
+         return { success: true, user: result.user };
       } catch (error) {
          this.isAuthenticated = false;
+         this.user = {};
          return {
             success: false,
             message:
@@ -31,7 +45,6 @@ class AuthService {
                "An unexpected error occurred during session validation",
          };
       }
-      return { success: true };
    }
    async checkAuthentication() {
       if (!this.isAuthenticated) {
@@ -42,11 +55,11 @@ class AuthService {
             return response;
          }
          console.log("VALIDATE SESSION");
+         return response;
       } else {
          console.log("AUTHENTICATED");
+         return { success: this.isAuthenticated , user: this.user};
       }
-
-      return { success: true };
    }
    async signup(data) {
       const options = {
@@ -115,6 +128,7 @@ class AuthService {
             return { success: false, message: json.message };
          }
          this.isAuthenticated = false;
+         this.user = {};
       } catch (error) {
          return {
             success: false,
@@ -136,6 +150,7 @@ class AuthService {
       return {
          success: true,
          message: json.message,
+         user: result.user
       };
    }
    userFormValidation(data, form) {
