@@ -97,8 +97,8 @@ const create = async (req, res, next) => {
       await newTask.save();
 
       res.status(StatusCodes.CREATED).json({
-         message: "Task created successfully",
-         data: newTask,
+         ...newTask._doc,
+         priority: Task.prototype.priorityToString(newTask.priority),
       });
    } catch (error) {
       return next(error);
@@ -131,9 +131,10 @@ const update = async (req, res, next) => {
          });
       }
 
-      return res
-         .status(StatusCodes.OK)
-         .json({ message: "Task successfully updated", data: task });
+      return res.status(StatusCodes.OK).json({
+         ...task._doc,
+         priority: Task.prototype.priorityToString(task.priority),
+      });
    } catch (error) {
       return next(error);
    }

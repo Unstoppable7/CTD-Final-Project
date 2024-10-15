@@ -9,6 +9,8 @@ const taskSchema = new Schema({
 
    description: String,
 
+   completed: { type: Boolean, default: false },
+
    parentTask: {
       type: Schema.Types.ObjectId,
       ref: "Task",
