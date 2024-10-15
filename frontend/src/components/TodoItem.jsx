@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState, React, useEffect, useRef } from 'react';
-import AddTodoForm from './AddTodoForm';
 import TodoList from './TodoList';
 
 export default function TodoItem({ item, toggleHandleByParent, onCheckedItem, onDeleteItem, sorter }) {
@@ -55,4 +54,12 @@ export default function TodoItem({ item, toggleHandleByParent, onCheckedItem, on
          </div>
       </div>
    );
+}
+
+TodoItem.propTypes = {
+   item: PropTypes.object,
+   toggleHandleByParent: PropTypes.bool,
+   onCheckedItem: PropTypes.func,
+   onDeleteItem: PropTypes.func,
+   sorter: PropTypes.func
 }

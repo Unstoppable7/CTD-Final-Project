@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 import TaskService from "../TaskService";
 import AddTodoForm from "./AddTodoForm";
+import PropTypes from "prop-types";
 
 export default function TodoList({ initialData, parentId, toggleHandleByParent, sorter, onAddTodoForm }) {
    const [data, setData] = useState(initialData);
@@ -110,4 +111,12 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
          )}
       </div>
    );
+}
+
+TodoList.propTypes = {
+   initialData: PropTypes.array,
+   parentId: PropTypes.string,
+   toggleHandleByParent: PropTypes.bool,
+   sorter: PropTypes.func,
+   onAddTodoForm: PropTypes.bool
 }
