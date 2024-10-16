@@ -1,0 +1,136 @@
+.todoItem {
+   padding: 10px;
+   border-radius: 8px;
+   display: flex;
+   background-color: rgba(61, 61, 61, 0.502);
+   margin-bottom: 10px;
+   flex-direction: column;
+}
+
+.todoItem.completed {
+   background-color: rgba(71, 164, 66, 0.254);
+}
+
+.todoItem .container {
+   display: flex;
+   flex-direction: row;
+   gap: 5px;
+   padding: 15px;
+   justify-content: space-between;
+}
+
+.todoItem .todoContent {
+   font-size: 16px;
+   display: flex;
+   flex-direction: row;
+   gap: 5px;
+   margin-left: 20px;
+}
+
+.todoItem .todoContent .title {
+   font-weight: bold;
+   color: #f4f4f4;
+}
+
+.todoItem .todoContent .dueDate,
+.todoItem .todoContent .priority {
+   color: #d9d9d9;
+}
+
+.todoItem .actions {
+   display: flex;
+   gap: 5px;
+   align-items: center;
+}
+
+.todoItem .actions .deleteButton {
+   padding: 5px 10px;
+   background: linear-gradient(80deg, #f05353, #e64141);
+   color: white;
+   border: none;
+   border-radius: 5px;
+}
+
+.todoItem .actions button {
+   font-size: 14px;
+}
+
+.todoItem .subContainerLeft {
+   display: flex;
+   align-items: center;
+}
+
+.todoItem .subContainerRight {
+   display: flex;
+}
+
+.todoItem .actions .deleteButton:hover {
+   background: linear-gradient(80deg, #d64a4a, #cd3939);
+}
+
+.todoItem .actions .toggleButton {
+   background: linear-gradient(80deg, #53adf0, #4183e6);
+   padding: 5px 10px;
+   border-radius: 5px;
+   color: white;
+   border: none;
+}
+
+.todoItem .actions .toggleButton:hover {
+   background: linear-gradient(80deg, #4a9ad6, #3974cd);
+}
+
+.todoItem .actions .checkButton {
+   background: linear-gradient(80deg, #56d248, #37c645);
+   padding: 5px 10px;
+   border-radius: 5px;
+   color: white;
+   border: none;
+}
+
+.todoItem .actions .checkButton:hover {
+   background: linear-gradient(80deg, #47cc47, #40ad31);
+}
+
+@media (max-width: 768px) {
+   .todoItem .todoContent {
+      font-size: 14px;
+      margin-left: 10px;
+   }
+
+   .todoItem .actions .deleteButton,
+   .todoItem .actions .toggleButton,
+   .todoItem .actions .checkButton {
+      padding: 4px 8px;
+   }
+   .todoItem .actions button {
+      font-size: 12px;
+   }
+}
+
+@media (max-width: 480px) {
+   .todoItem {
+      padding: 5px;
+   }
+
+   .todoItem .container {
+      padding: 5px;
+   }
+
+   .todoItem .todoContent {
+      font-size: 12px;
+   }
+   .todoItem .actions {
+      flex-direction: column;
+      gap: 3px;
+   }
+
+   .todoItem .actions .deleteButton,
+   .todoItem .actions .toggleButton,
+   .todoItem .actions .checkButton {
+      padding: 3px 6px;
+   }
+   .todoItem .actions button {
+      font-size: 10px;
+   }
+}

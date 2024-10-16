@@ -1,0 +1,23 @@
+.addTodoForm {
+   display: flex;
+   flex-direction: column;
+   padding-top: 10px;
+}
+
+.addTodoForm input {
+   color: rgb(240, 240, 240);
+   padding: 10px;
+   border: 1px solid #ffffff00;
+   border-radius: 5px;
+   font-size: 16px;
+   background-color: #ffffff41;
+}
+
+.addTodoForm input::placeholder {
+   color: rgb(240, 240, 240);
+}
+
+.addTodoForm input:focus {
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.255);
+   outline: none;
+}

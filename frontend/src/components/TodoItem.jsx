@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState, React, useEffect, useRef } from 'react';
 import TodoList from './TodoList';
+import styles from "../css/TodoItem.module.css"
 
 export default function TodoItem({ item, toggleHandleByParent, onCheckedItem, onDeleteItem, sorter }) {
    const [toggle, setToggle] = useState(false);
@@ -27,29 +28,25 @@ export default function TodoItem({ item, toggleHandleByParent, onCheckedItem, on
    }, []);
 
    return (
-      <div hidden={toggleHandleByParent}>
-         <button type='button' onClick={onToggle}>
-            toggle
-         </button>
-         <button type='button' onClick={onCheckedItem}>
-            check
-         </button>
-         <button type='button' onClick={onDeleteItem}>
-            delete
-         </button>
-         <div onDoubleClick={() => { setAddTodoChild(true); setToggle(true) }} >
-            {item.completed ? <div style={{ color: "green" }}>Completed</div> : ""}
-            <div>
-               {item.title}
+      <div className={`${styles.todoItem} ${item.completed ? styles.completed : ""}`} hidden={toggleHandleByParent}>
+         <div className={styles.container}>
+            <div className={styles.subContainerLeft}>
+               <div className={styles.actions}>
+                  <button className={styles.toggleButton} type='button' onClick={onToggle}>toggle</button>
+               </div>
+
+               <div className={styles.todoContent} onDoubleClick={() => { setAddTodoChild(true); setToggle(true) }} >
+                  <div className={styles.title}>{item.title}</div>
+                  <div className={styles.dueDate}>{item.dueDate}</div>
+                  <div className={styles.priority}>{item.priority}</div>
+               </div>
             </div>
-            <div>
-               {item.dueDate}
-            </div>
-            <div>
-               {item.priority}
+            <div className={`${styles.actions} ${styles.subContainerRight}`}>
+               <button className={styles.checkButton} type='button' onClick={onCheckedItem}>check</button>
+               <button className={styles.deleteButton} type='button' onClick={onDeleteItem}>delete</button>
             </div>
          </div>
-         <div tabIndex={"0"} ref={divRefAddTodoForm}>
+         <div hidden={!toggle} tabIndex={"0"} ref={divRefAddTodoForm}>
             <TodoList initialData={[]} parentId={item._id} toggleHandleByParent={!toggle} sorter={sorter} onAddTodoForm={addTodoChild} />
          </div>
       </div>
