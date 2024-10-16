@@ -9,9 +9,12 @@ const errorHandler = require("./middleware/error-handler");
 const cors = require("cors");
 const authMiddleware = require("./middleware/auth");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const rateLimiter = require("express-rate-limit");
 
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser(process.env.AUTH_COOKIE_SECRET));
 app.use(
    cors({
       origin: "http://localhost:5173",
@@ -21,9 +24,23 @@ app.use(
    })
 );
 
+app.use(
+   rateLimiter({
+      windowMs: 15 * 60 * 1000, 
+      max: 100,
+   })
+);
+app.use(helmet());
+app.use(xss());
+
+
 app.use(process.env.API_BASE_URL_V1 + process.env.API_AUTH_URL, authRouter);
 
-app.use(process.env.API_BASE_URL_V1 + process.env.API_TASKS_URL, authMiddleware, taskRouter);
+app.use(
+   process.env.API_BASE_URL_V1 + process.env.API_TASKS_URL,
+   authMiddleware,
+   taskRouter
+);
 
 app.use(errorHandler);
 
