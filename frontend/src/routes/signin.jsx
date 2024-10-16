@@ -1,5 +1,6 @@
 import { Form, redirect, useActionData, useLocation, useNavigation } from "react-router-dom";
 import { authService } from "../AuthService";
+import styles from "../css/Authentication.module.css"
 
 export async function loader() {
    if ((await authService.checkAuthentication()).success) {
@@ -38,19 +39,27 @@ export default function Signin() {
    let actionData = useActionData();
 
    return (
-      <div>
-         <p>You must log in to view the page at {from}</p>
-         <Form method="post">
-            <input type="hidden" name="redirectTo" value={from} />
-            <label htmlFor="email">Email</label>
-            <input autoComplete="true" type="email" id="email" name="email" />
-            <label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" />
-            <button type="submit" disabled={isLoggingIn}>{isLoggingIn ? "Signing in..." : "Sign in"}</button>
-            {actionData ? (
-               <p style={actionData.success ? { color: "green", whiteSpace: "pre-line" } : { color: "red", whiteSpace: "pre-line" }}>{actionData.message}</p>
-            ) : null}
-         </Form>
+      <div className={styles.container}>
+         <div className={styles.card}>
+            <h1>Sign in</h1>
+            <Form method="post">
+               <input type="hidden" name="redirectTo" value={from} />
+               <label className={styles.label} htmlFor="email">Email</label>
+               <input className={styles.input} autoComplete="true" type="email" id="email" name="email" />
+               <label className={styles.label} htmlFor="password">Password</label>
+               <input className={styles.input} type="password" id="password" name="password" />
+               <button className={styles.button} type="submit" disabled={isLoggingIn}>
+                  {isLoggingIn ? "Signing in..." : "Submit"}
+               </button>
+               {actionData ? (
+                  <p className={`${styles.message} ${actionData.success ? styles.success : styles.error}`}>
+                     {actionData.message}
+                  </p>
+               ) : null}
+            </Form>
+         </div>
       </div>
+
+
    );
 } 

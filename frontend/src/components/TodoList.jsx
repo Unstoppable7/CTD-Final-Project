@@ -3,6 +3,7 @@ import TodoItem from "./TodoItem";
 import TaskService from "../TaskService";
 import AddTodoForm from "./AddTodoForm";
 import PropTypes from "prop-types";
+import styles from "../css/TodoList.module.css"
 
 export default function TodoList({ initialData, parentId, toggleHandleByParent, sorter, onAddTodoForm }) {
    const [data, setData] = useState(initialData);
@@ -13,7 +14,7 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
       // setIsLoading(false);
       console.log("data: ", data);
    });
-   
+
    useEffect(() => {
       setShowAddTodoForm(onAddTodoForm);
    }, [onAddTodoForm]);
@@ -100,11 +101,11 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
 
    return (
       <div>
-         {isLoading ? <p>Loading...</p> : ""}
-         {!isLoading && (data && data.length > 0) && (
-            data.map((todo) => {
-               return (<TodoItem key={todo._id} item={todo} toggleHandleByParent={toggleHandleByParent} onCheckedItem={() => updateTodo({ _id: todo._id, completed: !todo.completed })} onDeleteItem={() => deleteTodo(todo._id)} sorter={sorter} />);
-            })
+         {isLoading ? <p className={styles.loading}>Loading...</p> : ""}
+         {!isLoading && data && data.length > 0 && (
+            data.map((todo) => (
+               <TodoItem key={todo._id} item={todo} toggleHandleByParent={toggleHandleByParent} onCheckedItem={() => updateTodo({ _id: todo._id, completed: !todo.completed })} onDeleteItem={() => deleteTodo(todo._id)} sorter={sorter} />
+            ))
          )}
          {!isLoading && showAddTodoForm && (
             <AddTodoForm onAddTodo={postTodo} />

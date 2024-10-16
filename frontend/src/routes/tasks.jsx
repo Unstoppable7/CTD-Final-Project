@@ -1,8 +1,8 @@
-import PropTypes from "prop-types";
 import TodoList from "../components/TodoList";
 import { useState } from "react";
 import TaskService from "../TaskService";
 import { useLoaderData } from "react-router-dom";
+import styles from "../css/Tasks.module.css"
 
 export async function loader() {
    const result = await TaskService.getTasks();
@@ -31,9 +31,11 @@ export default function Tasks() {
    }
    const loaderData = useLoaderData().sort(sorter);
    return (
-      <div>
-         <p>Tasks</p>
-         <TodoList initialData={loaderData} toggleHandleByParent={false} sorter={sorter} onAddTodoForm={true} />
+      <div className={styles.container}>
+         <div className={styles.taskListContainer}>
+            <p className={styles.header}>Tasks</p>
+            <TodoList initialData={loaderData} toggleHandleByParent={false} sorter={sorter} onAddTodoForm={true} />
+         </div>
       </div>
    );
 }

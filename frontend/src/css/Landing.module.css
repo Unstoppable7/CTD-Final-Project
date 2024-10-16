@@ -1,0 +1,165 @@
+.landingPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  background-color: #f4f4f9;
+  padding: 0 20px;
+}
+
+.textSection {
+  margin: 0;
+  color: #333;
+}
+
+.h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.h2 {
+  font-size: 2rem;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+
+.p {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signinButton {
+  background-color: #007BFF;
+  color: white;
+}
+
+.signinButton:hover {
+  background-color: #0056b3;
+}
+
+.signupButton {
+  background-color: #6c757d;
+  color: white;
+}
+
+.signupButton:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 575.98px) {
+  .landingPage {
+     padding: 0 10px;
+  }
+
+  .h1 {
+     font-size: 2rem;
+  }
+
+  .h2 {
+     font-size: 1.5rem;
+     margin-top: 1rem;
+  }
+
+  .p {
+     font-size: 1rem;
+  }
+
+  .heroSection {
+     margin-top: 3rem;
+  }
+
+  .ctaButtons {
+     flex-direction: column;
+     gap: 0.5rem;
+     margin-top: 1rem;
+  }
+
+  .btn {
+     padding: 0.5rem 1.5rem;
+     font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .h1 {
+     font-size: 2.5rem;
+  }
+
+  .h2 {
+     font-size: 1.8rem;
+     margin-top: 1.5rem;
+  }
+
+  .p {
+     font-size: 1.1rem;
+  }
+
+  .heroSection {
+     margin-top: 4rem;
+  }
+
+  .ctaButtons {
+     flex-direction: row;
+     gap: 0.75rem;
+     margin-top: 1.5rem;
+  }
+
+  .btn {
+     padding: 0.6rem 1.8rem;
+     font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .h1 {
+     font-size: 3rem;
+  }
+
+  .h2 {
+     font-size: 2rem;
+     margin-top: 2rem;
+  }
+
+  .p {
+     font-size: 1.2rem;
+  }
+
+  .heroSection {
+     margin-top: 5rem;
+  }
+
+  .ctaButtons {
+     flex-direction: row;
+     gap: 1rem;
+     margin-top: 2rem;
+  }
+
+  .btn {
+     padding: 0.75rem 2rem;
+     font-size: 1rem;
+  }
+}
