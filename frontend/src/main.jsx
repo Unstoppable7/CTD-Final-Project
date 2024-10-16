@@ -6,7 +6,7 @@ import ErrorPage from './routes/error-page.jsx';
 import Signin, { action as signinAction, loader as signinLoader } from './routes/signin.jsx';
 import Signup, { action as signupAction, loader as signupLoader } from './routes/signup.jsx';
 import Tasks, { loader as tasksLoader } from './routes/tasks.jsx';
-import Landing from './components/Landing.jsx';
+import Landing, { loader as landingLoader } from './routes/landing.jsx';
 
 const router = createBrowserRouter([
    {
@@ -18,7 +18,8 @@ const router = createBrowserRouter([
       children: [
          {
             index: true,
-            element: <Landing />
+            element: <Landing />,
+            loader: landingLoader,
          },
          {
             path: "signin",
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
             path: import.meta.env.VITE_CLIENT_TASK_ROOT_URL,
             element: <Tasks />,
             loader: tasksLoader
-         }
+         },
       ]
    }
 ])

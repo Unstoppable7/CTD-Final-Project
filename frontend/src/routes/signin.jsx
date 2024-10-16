@@ -3,7 +3,7 @@ import { authService } from "../AuthService";
 import styles from "../css/Authentication.module.css"
 
 export async function loader() {
-   if ((await authService.checkAuthentication()).success) {
+   if ((await authService.validateSession()).success) {
       return redirect(import.meta.env.VITE_CLIENT_TASK_ROOT_URL);
    }
    return null;

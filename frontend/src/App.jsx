@@ -3,11 +3,12 @@ import styles from "./css/Nav.module.css"
 import { authService } from "./AuthService";
 
 export async function loader() {
-   return await authService.checkAuthentication();
+   return await authService.validateSession();
 }
 
 export default function App() {
    const auth = useLoaderData();
+
    return (
       <>
          <nav className={styles.navbar}>
@@ -27,7 +28,7 @@ export default function App() {
                )}
                {auth.success && (
                   <li>
-                     <Link to={`signout`} className={`${styles.btn} ${styles.signoutButton}`}>Sign out</Link>
+                     <Link to={`/`} onClick={async () => await authService.signout()} className={`${styles.btn} ${styles.signoutButton}`}>Sign out</Link>
                   </li>
                )}
             </ul>

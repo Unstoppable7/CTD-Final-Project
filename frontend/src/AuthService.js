@@ -48,16 +48,12 @@ class AuthService {
    }
    async checkAuthentication() {
       if (!this.isAuthenticated) {
-         console.log("NOT AUTHENTICATED");
          const response = await this.validateSession();
          if (!response.success) {
-            console.log("NOT VALIDATE SESSION");
             return response;
          }
-         console.log("VALIDATE SESSION");
          return response;
       } else {
-         console.log("AUTHENTICATED");
          return { success: this.isAuthenticated , user: this.user};
       }
    }
