@@ -1,0 +1,16 @@
+{
+  "name": "final-project",
+  "version": "1.0.0",
+  "scripts": {
+    "server": "npm start --prefix backend",
+    "client": "npm run dev --prefix frontend",
+    "build": "npm install --prefix frontend && npm install --prefix backend",
+    "app": "npm start --prefix backend && npm run dev --prefix frontend"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

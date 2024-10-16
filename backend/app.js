@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.AUTH_COOKIE_SECRET));
 app.use(
    cors({
-      origin: "http://localhost:5173",
+      origin: `${process.env.CLIENT_URL}`,
       methods: ["GET", "POST", "PATCH", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
