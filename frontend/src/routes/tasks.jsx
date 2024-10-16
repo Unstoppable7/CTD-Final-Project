@@ -1,13 +1,14 @@
 import TodoList from "../components/TodoList";
 import { useState } from "react";
 import TaskService from "../TaskService";
-import { useLoaderData } from "react-router-dom";
+import { redirect, useLoaderData } from "react-router-dom";
 import styles from "../css/Tasks.module.css"
 
 export async function loader() {
    const result = await TaskService.getTasks();
    if (!result.success) {
-      throw Error(result.message);
+      //TODO error handling
+      return redirect('/');
    }
    return result.data;
 }

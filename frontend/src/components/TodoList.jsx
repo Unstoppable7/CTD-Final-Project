@@ -11,11 +11,6 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
    const [showAddTodoForm, setShowAddTodoForm] = useState(false);
 
    useEffect(() => {
-      // setIsLoading(false);
-      console.log("data: ", data);
-   });
-
-   useEffect(() => {
       setShowAddTodoForm(onAddTodoForm);
    }, [onAddTodoForm]);
 
@@ -29,10 +24,10 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
       setIsLoading(true);
 
       const result = await TaskService.getTasks(parentId);
-      console.log("Fetch: ", result);
 
       //TODO manejo de errores
       if (!result.success) {
+         setIsLoading(false);
          throw json({ message: result.message });
       }
       setData(result.data);
@@ -46,6 +41,7 @@ export default function TodoList({ initialData, parentId, toggleHandleByParent, 
       //TODO manejar mensaje de error
       if (!response.success) {
          setData(originalItems);
+         setIsLoading(false);
          throw Error(response.message);
       }
       addTodo(response.data);
