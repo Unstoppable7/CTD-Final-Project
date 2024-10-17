@@ -54,7 +54,7 @@ class AuthService {
          }
          return response;
       } else {
-         return { success: this.isAuthenticated , user: this.user};
+         return { success: this.isAuthenticated, user: this.user };
       }
    }
    async signup(data) {
@@ -103,6 +103,7 @@ class AuthService {
          );
          return await this.handleFetchAuthError(response);
       } catch (error) {
+         console.log("Error AuthService Sign in: ", error);
          return {
             success: false,
             message:
@@ -135,7 +136,9 @@ class AuthService {
       return { success: true, message: "Successful sign out" };
    }
    async handleFetchAuthError(response) {
+      console.log("Response AuthService HandleFetch: ", response);
       const json = await response.json();
+      console.log("Json-response AuthService HandleFetch: ", json);
       if (!response.ok) {
          return { success: false, message: json.message };
       }
@@ -146,7 +149,7 @@ class AuthService {
       return {
          success: true,
          message: json.message,
-         user: result.user
+         user: result.user,
       };
    }
    userFormValidation(data, form) {

@@ -8,6 +8,7 @@ export async function loader() {
    const result = await TaskService.getTasks();
    if (!result.success) {
       //TODO error handling
+      console.log("Result Tasks Loader: ", result);
       return redirect('/');
    }
    return result.data;

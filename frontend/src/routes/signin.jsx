@@ -23,9 +23,14 @@ export async function action({ request }) {
 
    result = await authService.signin(data);
 
+   console.log("redirectTo: ", formData.get("redirectTo"));
+   console.log("Result Sign in Action: ", result);
+   console.log("Data Sign in Action: ", data);
+
    if (!result.success) {
       return result
    }
+
    return redirect(formData.get("redirectTo"));
 }
 

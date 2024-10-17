@@ -14,8 +14,9 @@ const signup = async (req, res, next) => {
             Date.now() + process.env.AUTH_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
          ),
          httpOnly: true,
+         sameSite: 'None',
          path: "/",
-         secure: false,
+         secure: true,
          signed: false,
       });
       res.status(StatusCodes.CREATED).json({
@@ -51,8 +52,9 @@ const signin = async (req, res, next) => {
             Date.now() + process.env.AUTH_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
          ),
          httpOnly: true,
+         sameSite: 'None',
          path: "/",
-         secure: false,
+         secure: true,
          signed: false,
       });
       res.status(StatusCodes.OK).json({
